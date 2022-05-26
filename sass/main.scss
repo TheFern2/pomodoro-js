@@ -1,0 +1,382 @@
+@use "breakpoints" as *;
+
+@import url("https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@700&family=Roboto&display=swap");
+
+* {
+  box-sizing: border-box;
+}
+
+$pomodoro-color: rgb(217, 85, 80);
+$pomodoro-lg-color: rgb(216, 122, 119);
+$short-break-color: rgb(76, 145, 149);
+$long-break-color: rgb(69, 124, 163);
+$task-color: white;
+$task-dark-color: rgb(58, 57, 57);
+$clear-global-color: rgba(173, 173, 173, 0.3);
+$clear-hover-color: rgba(173, 173, 173, 0.6);
+
+body {
+  background-color: $pomodoro-color;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: "Roboto", sans-serif;
+}
+
+.menu {
+  display: flex;
+  flex-direction: row;
+
+  @include xs {
+    width: 350px;
+  }
+
+  @include sm {
+    width: 500px;
+  }
+}
+
+.pomodoro-color {
+  background-color: $pomodoro-color;
+}
+
+.short-break-color {
+  background-color: $short-break-color;
+}
+
+.long-break-color {
+  background-color: $long-break-color;
+}
+
+.menu-btn {
+  margin-left: 10px;
+  display: flex;
+  flex-direction: row;
+  height: 30px;
+  align-items: center;
+  cursor: pointer;
+  color: white;
+  background: none;
+  border: none;
+  background-color: $clear-global-color;
+  border-radius: 5px;
+}
+
+.menu-btn:hover {
+  background-color: $clear-hover-color;
+}
+
+.menu-left {
+  margin-right: 200px;
+
+  @include xs {
+    margin-right: 0;
+  }
+}
+
+.menu-right {
+  display: flex;
+  flex-direction: row;
+  margin-left: auto;
+  align-items: center;
+}
+
+.title a {
+  text-decoration: none;
+  color: white;
+}
+
+.timer-container {
+  display: flex;
+  flex-direction: column;
+  background-color: $clear-global-color;
+  align-items: center;
+  width: 500px;
+  height: 300px;
+  border-radius: 5px;
+
+  @include xs {
+    width: 350px;
+  }
+
+  @include sm {
+    width: 400px;
+  }
+}
+
+.timer-top {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.timer-top-btn {
+  height: 30px;
+  border: none;
+  border-radius: 5px;
+  background: none;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+
+  // &:active {
+  //   background: rgb(55, 116, 100);
+  // }
+}
+
+.timer-top-btn.selected {
+  background: rgba(55, 116, 100, 0.3);
+}
+
+.timer-middle {
+  color: white;
+  font-size: 120px;
+  font-family: "M PLUS Rounded 1c", sans-serif;
+
+  @include xs {
+    font-size: 90px;
+  }
+
+  @include sm {
+    font-size: 120px;
+  }
+}
+
+.timer-bottom-btn {
+  height: 50px;
+  width: 200px;
+  border: none;
+  border-radius: 5px;
+  font-size: 25px;
+  background-color: white;
+  font-family: "M PLUS Rounded 1c", sans-serif;
+  color: $task-dark-color;
+  box-shadow: rgb(235, 235, 235) 0px 6px 0px;
+  cursor: pointer;
+
+  .selected {
+    height: 47px;
+    box-shadow: none;
+  }
+}
+
+.working-on {
+  font-size: 20px;
+  color: white;
+  text-align: center;
+}
+
+.working-title {
+  margin-bottom: 0px;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.working-task {
+  margin-top: 0px;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.tasks-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 2px solid $task-color;
+  height: 50px;
+  color: white;
+
+  @include xs {
+    width: 350px;
+  }
+
+  @include sm {
+    width: 400px;
+  }
+}
+
+.tasks-header .title {
+  margin-right: 400px;
+  font-size: 20px;
+
+  @include xs {
+    margin-right: 200px;
+  }
+
+  @include sm {
+    margin-right: 300px;
+  }
+}
+
+.header-btn {
+  height: 30px;
+  width: 30px;
+  margin-left: auto;
+  background: none;
+  border: none;
+  background-color: $clear-global-color;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.header-btn:hover {
+  background-color: $clear-hover-color;
+}
+
+.header-btn > i {
+  color: white;
+}
+
+.task-btn {
+  height: 30px;
+  width: 30px;
+  margin-left: auto;
+  background-color: rgb(70, 142, 145);
+  cursor: pointer;
+  background: none;
+  border: none;
+  border: 1px solid rgb(223, 223, 223);
+  border-radius: 5px;
+}
+
+.task-btn:hover {
+  background-color: $clear-hover-color;
+}
+
+.task-btn > i {
+  color: $task-dark-color;
+}
+
+.task {
+  display: flex;
+  flex-direction: row;
+  background-color: $task-color;
+  border-radius: 5px;
+  padding: 10px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  height: 60px;
+  align-items: center;
+  cursor: pointer;
+
+  &:hover {
+    border-left: 6px solid rgb(119, 118, 118);
+  }
+}
+
+.task.task-selected {
+  border-left: 6px solid rgb(0, 0, 0);
+}
+
+.task .right {
+  display: flex;
+  flex-direction: row;
+  margin-left: auto;
+  align-items: center;
+  font-size: 20px;
+}
+
+.task .left .title a {
+  font-size: 30px;
+  color: $task-dark-color;
+}
+
+.task-tracking {
+  font-size: 30px;
+  margin-right: 5px;
+  font-family: "Roboto", sans-serif;
+  color: $task-dark-color;
+}
+
+.add-task {
+  border-radius: 5px;
+  height: 60px;
+  text-align: center;
+  background-color: $clear-global-color;
+  border: 1px solid rgb(223, 223, 223);
+  border-style: dotted;
+}
+
+.add-task {
+  cursor: pointer;
+  margin-top: 10px;
+
+  &:hover {
+    background-color: $clear-hover-color;
+  }
+}
+
+.add-task-btn {
+  margin-top: 10px;
+}
+
+.add-task-title {
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+
+.add-task a {
+  text-decoration: none;
+  color: white;
+}
+
+.tasks-info {
+  display: flex;
+  flex-direction: row;
+  margin: 10px;
+  justify-content: center;
+  color: white;
+}
+
+.tasks-info > div {
+  margin-left: 10px;
+}
+
+.est-value,
+.act-value,
+.finish-at-value {
+  font-size: 24px;
+  font-family: "M PLUS Rounded 1c", sans-serif;
+}
+
+/* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  // z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0, 0, 0); /* Fallback color */
+  background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+  justify-content: center;
+  align-items: center;
+}
+
+/* Modal Content/Box */
+.modal-content {
+  width: 100px; /* Full width */
+  height: 200px; /* Full height */
+  background-color: #fefefe;
+  margin: 15% auto; /* 15% from the top and centered */
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%; /* Could be more or less, depending on screen size */
+  border-radius: 10px;
+}
+
+/* The Close Button */
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}

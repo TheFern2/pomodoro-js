@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Pomodoro Timer</title>
-    <link href="styles.css" rel="stylesheet" />
+    <link href="public/stylesheets/main.css" rel="stylesheet" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
@@ -45,9 +45,9 @@
         <button class="timer-top-btn">Short Break</button>
         <button class="timer-top-btn">Long Break</button>
       </div>
-      <div class="timer-middle">99:99</div>
+      <div id="timeOutput" class="timer-middle">99:99</div>
       <div class="timer-bottom">
-        <button class="timer-bottom-btn">START</button>
+        <button id="startBtn" class="timer-bottom-btn">START</button>
       </div>
     </div>
     <div class="working-on">
@@ -61,11 +61,11 @@
           <i class="fa fa-cog" aria-hidden="true"></i>
         </button>
       </div>
-      <div class="tasks">
-        <div class="task">
+      <div id="tasks" class="tasks">
+        <!-- <div class="task">
           <div class="left">
             <h1 class="title">
-              <a href="/">
+              <a href="#">
                 <i class="fa fa-check-circle" aria-hidden="true"></i>
                 A task
               </a>
@@ -77,32 +77,68 @@
               <i class="fa fa-cog" aria-hidden="true"></i>
             </button>
           </div>
-        </div>
+        </div> -->
       </div>
-      <div class="add-task">
+
+      <div id="add-task" class="add-task">
         <div class="add-task-btn">
           <h1 class="add-task-title">
-            <a href="/">
+            <a href="#">
               <i class="fa fa-plus-circle" aria-hidden="true"></i>
               Add task
             </a>
           </h1>
         </div>
       </div>
+
       <div class="tasks-info">
         <div class="est">
           Est:
-          <span class="est-value">14</span>
+          <span id="global-est" class="est-value">14</span>
         </div>
         <div class="act">
           Act:
-          <span class="act-value">2</span>
+          <span id="global-act" class="act-value">2</span>
         </div>
         <div class="finish-at">
           Finish at
-          <span class="finish-at-value">18:11</span>
+          <span id="finish-at" class="finish-at-value">18:11</span>
         </div>
       </div>
+    </div>
+    <!-- Trigger/Open The Modal -->
+    <!-- <button id="myBtn">Open Modal</button> -->
+
+    <!-- The Modal -->
+    <div id="myModal" class="modal">
+      <!-- Modal content -->
+      <form
+        role="form"
+        method="POST"
+        action=""
+        id="modal-content"
+        class="modal-content"
+      >
+        <span class="close">&times;</span>
+        <div>
+          <input
+            id="taskText"
+            type="text"
+            placeholder="What are you working on?"
+            class=""
+            value=""
+          />
+        </div>
+        <div>
+          <input id="est" type="number" />
+          <button>Up</button>
+          <button>Down</button>
+        </div>
+        <div>
+          <button>Cancel</button>
+          <button type="submit">Save</button>
+        </div>
+      </form>
     </div>
   </body>
 </html>
