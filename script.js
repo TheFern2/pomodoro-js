@@ -223,7 +223,13 @@ saveBtn.addEventListener("submit", (e) => {
   if (taskText.value.trim() === "" || est.value.trim() === "") {
     console.log("error");
   } else {
-    addTask(taskText.value, est.value, 0, false, true);
+    if (storedTasks.length > 0) {
+      addTask(taskText.value, est.value, 0, false, true);
+    } else {
+      addTask(taskText.value, est.value, 0, true, true);
+    }
+    const workingTask = document.getElementById("working-task");
+    workingTask.innerHTML = taskText.value;
   }
 });
 
