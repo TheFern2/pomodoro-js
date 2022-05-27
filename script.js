@@ -52,8 +52,8 @@ const addTask = (taskname, est, act, selected, storage) => {
   </div>
   <div class="right">
     <div class="task-tracking">${act}/${est}</div>
-    <button class="task-btn">
-      <i class="fa fa-minus-circle" aria-hidden="true"></i>
+    <button id="deleteBtn" class="task-btn"">
+      <i id="deleteBtnIcon" class="fa fa-minus-circle" aria-hidden="true"></i>
     </button>
   </div>`;
 
@@ -61,6 +61,8 @@ const addTask = (taskname, est, act, selected, storage) => {
   newDiv.innerHTML = taskHtml;
   newDiv.className = selected ? "task task-selected" : "task";
   // newDiv.setAttribute("onclick", "clickMe(e);");
+  const deleteBtn = newDiv.querySelector("#deleteBtn");
+  deleteBtn.addEventListener("click", deleteTask);
   newDiv.addEventListener("click", taskClicked);
   taskParent.appendChild(newDiv);
   if (storage) {
@@ -70,6 +72,44 @@ const addTask = (taskname, est, act, selected, storage) => {
       est: est,
       selected: selected,
     });
+    store.tasks = storedTasks;
+    localStorage.setItem("ls_tasks", JSON.stringify(store));
+  }
+};
+
+const deleteTask = (e) => {
+  e.preventDefault();
+  console.log("Delete task clicked");
+  console.log(e);
+
+  // show popup
+  let text = "Delete task";
+  if (confirm(text) == true) {
+    // get task div
+    const clickedTask = e.target.closest(".task");
+    const taskName = clickedTask.querySelectorAll("div h1 a");
+
+    console.log(clickedTask);
+    const taskNameStr = taskName[0].innerText.trim();
+    console.log(taskNameStr);
+    const foundTask = storedTasks.find(getTaskByName(taskNameStr));
+
+    // update text on current task if currently selected
+    if (foundTask.selected) {
+      const workingTask = document.getElementById("working-task");
+      workingTask.innerHTML = "";
+    }
+
+    // remove it from parent
+    taskParent.removeChild(clickedTask);
+
+    // update storedTasks
+    const index = storedTasks.indexOf(foundTask);
+    if (index > -1) {
+      storedTasks.splice(index, 1);
+    }
+
+    // update ls
     store.tasks = storedTasks;
     localStorage.setItem("ls_tasks", JSON.stringify(store));
   }
@@ -121,17 +161,23 @@ const getTaskBySelected = () => {
 };
 
 const taskClicked = (e) => {
-  console.log("Task has been clicked");
-
   let clickedTask = undefined;
 
   if (e.target === e.currentTarget) {
     clickedTask = e.target;
   } else {
+    // we want to ignore the delete button and the icon clicked events
+    // deleteBtn deleteBtnIcon ids
+    if (e.target.id === "deleteBtn" || e.target.id === "deleteBtnIcon") {
+      return;
+    }
+
     clickedTask = e.target.closest(".task");
   }
 
-  console.log(clickedTask);
+  // console.log(clickedTask);
+  // console.log(e);
+  console.log("Task has been clicked");
 
   const currClasslist = clickedTask.classList.value;
 
@@ -173,7 +219,7 @@ timeBtns[0].addEventListener("click", (e) => {
 saveBtn.addEventListener("submit", (e) => {
   e.preventDefault();
   //console.log("Save button");
-  console.log(`Task ${taskText.value} ${est.value}`);
+  //console.log(`Task ${taskText.value} ${est.value}`);
   if (taskText.value.trim() === "" || est.value.trim() === "") {
     console.log("error");
   } else {
