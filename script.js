@@ -5,7 +5,11 @@ const timeBtns = document.getElementsByClassName("timer-top");
 const taskParent = document.getElementById("tasks");
 const body = document.body;
 let storedTasks = [];
-let currIndex = 0;
+let currTask = undefined;
+let store = {
+  tasks: [],
+  currTask: undefined,
+};
 
 // initialization
 const pomodoro_tm = "25:00";
@@ -15,23 +19,29 @@ const long_break_tm = "15:00";
 const init = () => {
   timeOutput.innerHTML = pomodoro_tm;
 
-  tmp_tasks = JSON.parse(localStorage.getItem("ls_tasks"));
-  if (tmp_tasks) {
-    tmp_tasks.forEach((element) => {
-      if (!storedTasks.includes(element)) {
-        storedTasks.push(element);
-      }
-    });
-    //storedTasks = tmp_tasks;
+  const tmp_store = JSON.parse(localStorage.getItem("ls_tasks"));
+  if (tmp_store) {
+    if (tmp_store.tasks) {
+      tmp_store.tasks.forEach((element) => {
+        if (!storedTasks.includes(element)) {
+          storedTasks.push(element);
+        }
+      });
 
-    storedTasks.forEach((element) => addTask(element.name, element.est, false));
+      storedTasks.forEach((element) =>
+        addTask(element.name, element.est, element.act, element.selected, false)
+      );
+    }
+
+    if (tmp_store.currTask) {
+      currTask = tmp_store.currTask;
+      const workingTask = document.getElementById("working-task");
+      workingTask.innerHTML = currTask.name;
+    }
   }
-
-  //   addTask("My task", 3);
-  //   addTask("My task 2", 2);
 };
 
-const addTask = (taskname, est, storage) => {
+const addTask = (taskname, est, act, selected, storage) => {
   const taskHtml = `<div class="left">
     <h1 class="title">
       <a href="#">
@@ -41,20 +51,27 @@ const addTask = (taskname, est, storage) => {
     </h1>
   </div>
   <div class="right">
-    <div class="task-tracking">0/${est}</div>
+    <div class="task-tracking">${act}/${est}</div>
     <button class="task-btn">
-      <i class="fa fa-cog" aria-hidden="true"></i>
+      <i class="fa fa-minus-circle" aria-hidden="true"></i>
     </button>
   </div>`;
 
   const newDiv = document.createElement("div");
   newDiv.innerHTML = taskHtml;
-  newDiv.className = "task";
+  newDiv.className = selected ? "task task-selected" : "task";
+  // newDiv.setAttribute("onclick", "clickMe(e);");
+  newDiv.addEventListener("click", taskClicked);
   taskParent.appendChild(newDiv);
   if (storage) {
-    storedTasks.push({ index: currIndex, name: taskname, est: est });
-    currIndex++;
-    localStorage.setItem("ls_tasks", JSON.stringify(storedTasks));
+    storedTasks.push({
+      name: taskname,
+      act: act,
+      est: est,
+      selected: selected,
+    });
+    store.tasks = storedTasks;
+    localStorage.setItem("ls_tasks", JSON.stringify(store));
   }
 };
 
@@ -62,6 +79,12 @@ const removeLeftBorder = () => {
   const matches = document.querySelectorAll(".task-selected");
   if (matches.length > 0) {
     matches[0].classList.remove("task-selected"); // should be only 1 match
+    const foundTask = storedTasks.find(getTaskBySelected());
+    if (foundTask && foundTask.selected) {
+      foundTask.selected = false;
+      store.tasks = storedTasks;
+      localStorage.setItem("ls_tasks", JSON.stringify(store));
+    }
   }
 };
 
@@ -89,6 +112,52 @@ const updateTime = (text) => {
 
 const updateUI = () => {};
 
+const getTaskByName = (htmlTaskName) => {
+  return (task) => task.name === htmlTaskName;
+};
+
+const getTaskBySelected = () => {
+  return (task) => task.selected === true;
+};
+
+const taskClicked = (e) => {
+  console.log("Task has been clicked");
+
+  let clickedTask = undefined;
+
+  if (e.target === e.currentTarget) {
+    clickedTask = e.target;
+  } else {
+    clickedTask = e.target.closest(".task");
+  }
+
+  console.log(clickedTask);
+
+  const currClasslist = clickedTask.classList.value;
+
+  if (!currClasslist.includes("task-selected")) {
+    removeLeftBorder();
+    clickedTask.classList.add("task-selected");
+    const taskName = clickedTask.querySelectorAll("div h1 a");
+    const taskNameStr = taskName[0].innerText.trim();
+    const foundTask = storedTasks.find(getTaskByName(taskNameStr));
+
+    // update storedTask
+    if (foundTask && !foundTask.selected) {
+      foundTask.selected = true;
+      currTask = foundTask;
+      const workingTask = document.getElementById("working-task");
+      workingTask.innerHTML = currTask.name;
+      store.currTask = currTask;
+      localStorage.setItem("ls_tasks", JSON.stringify(store));
+    }
+
+    // update ls
+    store.tasks = storedTasks;
+    localStorage.setItem("ls_tasks", JSON.stringify(store));
+  }
+};
+
 startBtn.addEventListener("click", () => {
   console.log("start button clicked");
 });
@@ -108,16 +177,7 @@ saveBtn.addEventListener("submit", (e) => {
   if (taskText.value.trim() === "" || est.value.trim() === "") {
     console.log("error");
   } else {
-    addTask(taskText.value, est.value, true);
-  }
-});
-
-taskParent.addEventListener("click", (e) => {
-  const currClasslist = e.target.classList.value;
-
-  if (!currClasslist.includes("task-selected")) {
-    removeLeftBorder();
-    e.target.classList.add("task-selected");
+    addTask(taskText.value, est.value, 0, false, true);
   }
 });
 
