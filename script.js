@@ -1,4 +1,5 @@
 const startBtn = document.getElementById("startBtn");
+let stopBtn = undefined;
 const saveBtn = document.getElementById("modal-content");
 const timeOutput = document.getElementById("timeOutput");
 const timeBtns = document.getElementsByClassName("timer-top");
@@ -6,18 +7,24 @@ const taskParent = document.getElementById("tasks");
 const body = document.body;
 let storedTasks = [];
 let currTask = undefined;
+let currMin = undefined;
+let currSec = undefined;
 let store = {
   tasks: [],
   currTask: undefined,
+  currMin: undefined,
+  currSec: undefined,
 };
+let timerRunning = false;
 
 // initialization
-const pomodoro_tm = "25:00";
+const pomodoro_tm = "2:00";
 const short_break_tm = "5:00";
 const long_break_tm = "15:00";
 
 const init = () => {
   timeOutput.innerHTML = pomodoro_tm;
+  let [min, sec] = pomodoro_tm.split(":");
 
   const tmp_store = JSON.parse(localStorage.getItem("ls_tasks"));
   if (tmp_store) {
@@ -38,6 +45,24 @@ const init = () => {
       const workingTask = document.getElementById("working-task");
       workingTask.innerHTML = currTask.name;
     }
+
+    if (tmp_store.currMin) {
+      currMin = tmp_store.currMin;
+    }
+
+    if (tmp_store.currSec) {
+      currSec = tmp_store.currSec;
+    }
+  } else {
+    // console.log(`${min}:${sec}`);
+    currSec = sec;
+    store.currSec = sec;
+
+    currMin = min;
+    store.currMin = min;
+
+    console.log(`${currMin}:${currSec}`);
+    localStorage.setItem("ls_tasks", JSON.stringify(store));
   }
 };
 
@@ -204,8 +229,48 @@ const taskClicked = (e) => {
   }
 };
 
-startBtn.addEventListener("click", () => {
+startBtn.addEventListener("click", (e) => {
   console.log("start button clicked");
+  //console.log(e);
+
+  // timerRunning = !timerRunning;
+  // console.log(timerRunning);
+  // let timerId = undefined;
+
+  e.target.innerText = "STOP";
+  e.target.id = "stopBtn";
+  stopBtn = document.getElementById("stopBtn");
+
+  stopBtn.addEventListener("click", (e) => {
+    console.log(`stop button clicked`);
+  });
+
+  const timerId = setInterval(() => {
+    // stop timer, reset pomodoro html time
+    if (currSec == 0 && currMin == 0) {
+      clearInterval(timerId);
+      timeOutput.innerHTML = pomodoro_tm;
+      return;
+    }
+
+    // decrement time
+    if (currSec == 0 && currMin != 0) {
+      currSec = 59;
+      if (currMin > 0) {
+        currMin--;
+      }
+    } else if (currSec > 0) {
+      currSec--;
+    }
+
+    //currSec--;
+    console.log(`${currMin}:${currSec < 10 ? "0" : ""}${currSec}`);
+
+    // update html
+    timeOutput.innerHTML = `${currMin}:${currSec < 10 ? "0" : ""}${currSec}`;
+
+    // update ls
+  }, 1000);
 });
 
 timeBtns[0].addEventListener("click", (e) => {
